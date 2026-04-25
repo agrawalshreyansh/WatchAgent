@@ -452,6 +452,7 @@ with col_ctrl1:
         st.session_state.running = not st.session_state.running
         st.rerun()
 
+
 st.markdown(f"<div style='font-family:Space Mono,monospace;font-size:0.65rem;color:#333;padding-top:10px;'>TICK #{st.session_state.tick_index - 1}</div>", unsafe_allow_html=True)
 
 if st.session_state.running:
