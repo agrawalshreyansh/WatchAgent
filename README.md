@@ -18,7 +18,7 @@ In our real-world implementation, we built a mobile companion app that connects 
 
 ### 📱 Real-World App Deployment
 
-> **[Download the Companion Android App Here](#)** *([https://drive.google.com/drive/folders/1ghFQ0oqob1gIt7aX4MNvQUBamgXggFWe?usp=sharing])*
+> **[Download the Companion Android App Here](https://drive.google.com/drive/folders/1ghFQ0oqob1gIt7aX4MNvQUBamgXggFWe?usp=sharing)** 
 
 If you wish to test the live Android application rather than the simulation dashboard, please ensure your device is correctly configured to push biometric data to the Android health ecosystem:
 
