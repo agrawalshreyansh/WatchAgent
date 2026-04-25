@@ -171,10 +171,27 @@ SCENARIOS = {
 }
 
 
+import random
+
 def get_tick(scenario_key, tick_index):
     scenario = SCENARIOS[scenario_key]
     ticks = scenario["ticks"]
-    tick = ticks[tick_index % len(ticks)].copy()
+    
+    # Slow down the progression: stay on each defined mock state for 4 ticks
+    # This prevents the activity from changing unrealistically fast
+    slow_index = tick_index // 4
+    
+    # Clamp to the last state instead of looping, which prevents battery from jumping back up
+    idx = min(slow_index, len(ticks) - 1)
+    tick = ticks[idx].copy()
+    
+    # Add minor realistic noise to vitals so the stream looks alive even when clamped
+    tick["heart_rate"] = tick["heart_rate"] + random.randint(-1, 1)
+    tick["hrv"] = tick["hrv"] + random.randint(-1, 1)
+    
+    # Ensure nested dictionary is copied so we don't mutate original
+    tick["accelerometer"] = tick["accelerometer"].copy()
+    
     tick["timestamp"] = datetime.now().strftime("%H:%M:%S")
     tick["scenario"] = scenario_key
     return tick

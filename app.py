@@ -16,157 +16,168 @@ st.set_page_config(
 # ── Custom CSS ────────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600&display=swap');
 
 html, body, .stApp {
-    background-color: #07070f !important;
-    font-family: 'DM Sans', sans-serif;
+    background: radial-gradient(circle at top, #111116 0%, #050505 100%) !important;
+    font-family: 'Inter', sans-serif;
+    color: #e0e0e0;
 }
 
 /* Hide streamlit chrome */
 #MainMenu, footer, header { visibility: hidden; }
-.block-container { padding: 1rem 1.5rem !important; max-width: 100% !important; }
+.block-container { padding: 2rem 2.5rem !important; max-width: 100% !important; }
+
+/* Custom Streamlit Buttons */
+div.stButton > button {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    color: #a0a0a0;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    transition: all 0.3s ease;
+}
+div.stButton > button:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    transform: translateY(-1px);
+}
 
 /* Header */
 .dash-header {
     display: flex; align-items: center; justify-content: space-between;
-    border-bottom: 1px solid rgba(255,255,255,0.07);
-    padding-bottom: 0.75rem; margin-bottom: 1rem;
+    padding-bottom: 1rem; margin-bottom: 1.5rem;
 }
-.dash-title { font-family: 'Space Mono', monospace; font-size: 1.1rem; color: #e0e0e0; letter-spacing: 0.08em; }
-.dash-subtitle { font-size: 0.72rem; color: #555; letter-spacing: 0.12em; text-transform: uppercase; margin-top: 2px; }
-.live-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #00e676; margin-right: 6px; animation: pulse 1.5s infinite; }
-@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
-.live-badge { font-family: 'Space Mono', monospace; font-size: 0.68rem; color: #00e676; letter-spacing: 0.15em; }
+.dash-title { 
+    font-family: 'Space Mono', monospace; 
+    font-size: 1.3rem; 
+    font-weight: 700;
+    background: linear-gradient(90deg, #ffffff, #888888);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 0.05em; 
+}
+.dash-subtitle { font-size: 0.75rem; color: #666; letter-spacing: 0.15em; text-transform: uppercase; margin-top: 4px; }
+.live-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #00e676; margin-right: 8px; animation: pulse 2s infinite; box-shadow: 0 0 8px #00e676; }
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+.live-badge { font-family: 'Space Mono', monospace; font-size: 0.65rem; color: #00e676; letter-spacing: 0.2em; }
 
-/* Panel cards */
+/* Panel cards - Glassmorphism */
 .panel-card {
-    background: #0d0d1a;
-    border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 10px;
-    padding: 1rem;
-    height: 550px;
+    background: rgba(15, 15, 18, 0.4);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: 16px;
+    padding: 1.25rem;
+    height: 580px;
     overflow-y: auto;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 .panel-title {
     font-family: 'Space Mono', monospace;
-    font-size: 0.68rem;
-    color: #444;
-    letter-spacing: 0.18em;
+    font-size: 0.65rem;
+    color: #666;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
-    margin-bottom: 0.75rem;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    padding-bottom: 0.5rem;
+    margin-bottom: 1.2rem;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    padding-bottom: 0.75rem;
 }
 
 /* Telemetry row */
 .tele-row {
     font-family: 'Space Mono', monospace;
-    font-size: 0.68rem;
-    color: #8a8a8a;
-    padding: 5px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.03);
-    line-height: 1.6;
+    font-size: 0.65rem;
+    color: #777;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.02);
+    line-height: 1.8;
 }
-.tele-ts { color: #333; margin-right: 8px; }
+.tele-ts { color: #444; margin-right: 12px; }
 .tele-key { color: #555; }
-.tele-val { color: #c0c0c0; }
-.tele-hr-high { color: #ff4444; font-weight: bold; }
-.tele-hr-ok { color: #00e676; }
-.tele-hr-mid { color: #ffab00; }
+.tele-val { color: #aaaaaa; }
+.tele-hr-high { color: #ff5252; font-weight: 700; text-shadow: 0 0 5px rgba(255,82,82,0.4); }
+.tele-hr-ok { color: #69f0ae; }
+.tele-hr-mid { color: #ffd740; }
 
 /* Profiler state */
 .state-chip {
     display: inline-block;
-    padding: 3px 10px;
-    border-radius: 20px;
+    padding: 4px 12px;
+    border-radius: 24px;
     font-family: 'Space Mono', monospace;
-    font-size: 0.68rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 10px;
-}
-.profiler-summary {
-    font-size: 0.85rem;
-    color: #ccc;
-    line-height: 1.5;
-    margin-bottom: 1rem;
-    padding: 10px;
-    background: rgba(255,255,255,0.03);
-    border-radius: 6px;
-    border-left: 3px solid #2979ff;
-}
-.metric-row { display: flex; justify-content: space-between; margin-bottom: 8px; }
-.metric-label { font-size: 0.72rem; color: #555; font-family: 'Space Mono', monospace; }
-.metric-bar-bg { height: 4px; background: rgba(255,255,255,0.06); border-radius: 2px; margin-top: 3px; }
-.metric-bar-fill { height: 4px; border-radius: 2px; transition: width 0.5s; }
-
-/* Action log */
-.action-entry {
-    padding: 10px 12px;
-    border-radius: 8px;
-    margin-bottom: 8px;
-    border-left: 3px solid;
-    background: rgba(255,255,255,0.02);
-}
-.action-alert { background: rgba(255,23,68,0.08); border-color: #ff1744; }
-.action-suppress { background: rgba(255,171,0,0.08); border-color: #ffab00; }
-.action-log { background: rgba(0,230,118,0.05); border-color: rgba(0,230,118,0.3); }
-.action-defer { background: rgba(124,77,255,0.08); border-color: #7c4dff; }
-
-.action-tag {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.62rem;
+    font-size: 0.65rem;
     font-weight: 700;
     letter-spacing: 0.15em;
     text-transform: uppercase;
+    margin-bottom: 12px;
 }
-.tag-alert { color: #ff1744; }
-.tag-suppress { color: #ffab00; }
-.tag-log { color: #00e676; }
-.tag-defer { color: #7c4dff; }
+.profiler-summary {
+    font-size: 0.9rem;
+    font-weight: 300;
+    color: #ddd;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    padding-left: 12px;
+    border-left: 2px solid rgba(255,255,255,0.1);
+}
+.metric-row { display: flex; justify-content: space-between; margin-bottom: 6px; }
+.metric-label { font-size: 0.65rem; color: #555; font-family: 'Space Mono', monospace; letter-spacing: 0.1em; }
+.metric-bar-bg { height: 2px; background: rgba(255,255,255,0.04); border-radius: 2px; margin-top: 4px; overflow: hidden; }
+.metric-bar-fill { height: 100%; border-radius: 2px; transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1); }
 
-.action-reason { font-size: 0.75rem; color: #aaa; margin-top: 4px; line-height: 1.4; }
-.action-meta { font-family: 'Space Mono', monospace; font-size: 0.6rem; color: #333; margin-top: 5px; }
+/* Action log */
+.action-entry {
+    padding: 12px 14px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    border-left: 2px solid;
+    background: rgba(0,0,0,0.2);
+    transition: transform 0.2s;
+}
+.action-entry:hover { transform: translateX(2px); }
+.action-alert { border-color: #ff5252; background: linear-gradient(90deg, rgba(255,82,82,0.05), transparent); }
+.action-suppress { border-color: #ffd740; background: linear-gradient(90deg, rgba(255,215,64,0.03), transparent); }
+.action-log { border-color: #69f0ae; background: linear-gradient(90deg, rgba(105,240,174,0.02), transparent); }
+.action-defer { border-color: #b388ff; background: linear-gradient(90deg, rgba(179,136,255,0.04), transparent); }
 
-/* Vital strip */
+.action-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+}
+.tag-alert { color: #ff5252; }
+.tag-suppress { color: #ffd740; }
+.tag-log { color: #69f0ae; }
+.tag-defer { color: #b388ff; }
+
+.action-reason { font-size: 0.8rem; font-weight: 300; color: #bbb; margin-top: 6px; line-height: 1.5; }
+
+/* Vital strip - Minimalist */
 .vital-strip {
-    display: flex; gap: 12px;
-    background: #0d0d1a;
-    border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 8px;
-    padding: 10px 16px;
-    margin-bottom: 1rem;
+    display: flex; gap: 20px;
+    background: rgba(15, 15, 18, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: 100px;
+    padding: 12px 32px;
+    margin-bottom: 2rem;
     align-items: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 .vital-item { text-align: center; }
-.vital-val { font-family: 'Space Mono', monospace; font-size: 1.1rem; color: #e0e0e0; }
-.vital-unit { font-size: 0.6rem; color: #444; text-transform: uppercase; letter-spacing: 0.1em; }
-.vital-divider { width: 1px; height: 28px; background: rgba(255,255,255,0.06); }
+.vital-val { font-family: 'Space Mono', monospace; font-size: 1.2rem; font-weight: 700; color: #fff; }
+.vital-unit { font-size: 0.55rem; color: #555; text-transform: uppercase; letter-spacing: 0.2em; margin-top: 2px; }
+.vital-divider { width: 1px; height: 24px; background: rgba(255,255,255,0.05); }
 
-/* Emergency Overlay */
-.emergency-banner {
-    background: linear-gradient(90deg, #d50000, #ff1744);
-    color: white;
-    padding: 20px;
-    border-radius: 12px;
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    box-shadow: 0 4px 15px rgba(213,0,0,0.4);
-    animation: pulse-border 1.5s infinite;
-    border: 2px solid #ff5252;
-}
-@keyframes pulse-border { 0%,100%{box-shadow: 0 0 0 0 rgba(255,23,68,0.7);} 50%{box-shadow: 0 0 0 10px rgba(255,23,68,0);} }
-.emergency-icon { font-size: 2.5rem; margin-right: 20px; }
-.emergency-title { font-family: 'Space Mono', monospace; font-size: 1.2rem; font-weight: 700; letter-spacing: 0.1em; }
-.emergency-text { font-size: 0.9rem; opacity: 0.9; margin-top: 5px; }
-
-/* Scrollbar */
-::-webkit-scrollbar { width: 3px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #222; border-radius: 2px; }
+/* Scrollbar hidden for minimalist look */
+::-webkit-scrollbar { display: none; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -193,10 +204,7 @@ if "emergency_notified" not in st.session_state:
 # ── Header ────────────────────────────────────────────────────────────────────
 st.markdown("""
 <div class="dash-header">
-  <div>
-    <div class="dash-title">⌚ WEARABLE CONTEXT ENGINE (3 AGENTS)</div>
-    <div class="dash-subtitle">Profiler (Observer) · Action (Urgency) · Arbiter (Wisdom)</div>
-  </div>
+  <div class="dash-title">WATCHAGENT OS</div>
   <div>
     <span class="live-dot"></span>
     <span class="live-badge">LIVE STREAM</span>
@@ -276,8 +284,6 @@ elif not is_emergency:
 
 # ── Vital strip ───────────────────────────────────────────────────────────────
 hr = tick["heart_rate"]
-hrv = tick["hrv"]
-spo2 = tick["spo2"]
 battery = tick["battery_pct"]
 activity = tick["accelerometer"]["activity"]
 
@@ -292,16 +298,6 @@ st.markdown(f"""
   </div>
   <div class="vital-divider"></div>
   <div class="vital-item">
-    <div class="vital-val">{hrv}</div>
-    <div class="vital-unit">HRV ms</div>
-  </div>
-  <div class="vital-divider"></div>
-  <div class="vital-item">
-    <div class="vital-val">{spo2}%</div>
-    <div class="vital-unit">SpO2</div>
-  </div>
-  <div class="vital-divider"></div>
-  <div class="vital-item">
     <div class="vital-val" style="color:{bat_color};">{battery}%</div>
     <div class="vital-unit">BATTERY</div>
   </div>
@@ -310,19 +306,9 @@ st.markdown(f"""
     <div class="vital-val" style="font-size:0.85rem;text-transform:capitalize;">{activity}</div>
     <div class="vital-unit">ACTIVITY</div>
   </div>
-  <div class="vital-divider"></div>
-  <div class="vital-item">
-    <div class="vital-val" style="font-size:0.85rem;">{tick['active_app']}</div>
-    <div class="vital-unit">ACTIVE APP</div>
-  </div>
-  <div class="vital-divider"></div>
-  <div class="vital-item">
-    <div class="vital-val" style="font-size:0.78rem;">{tick['gps']['label']}</div>
-    <div class="vital-unit">LOCATION</div>
-  </div>
   <div style="margin-left:auto;">
-    <div style="font-family:Space Mono,monospace;font-size:0.62rem;color:#333;">SCENARIO</div>
-    <div style="font-size:0.8rem;color:{SCENARIOS[st.session_state.scenario]['color']};">{SCENARIOS[st.session_state.scenario]['label']}</div>
+    <div style="font-family:Space Mono,monospace;font-size:0.62rem;color:#555;">SCENARIO</div>
+    <div style="font-size:0.8rem;font-weight:600;color:{SCENARIOS[st.session_state.scenario]['color']};">{SCENARIOS[st.session_state.scenario]['label']}</div>
   </div>
 </div>
 """, unsafe_allow_html=True)
@@ -334,20 +320,15 @@ col1, col2, col3, col4 = st.columns([1.1, 1, 1.1, 1.3])
 # ── Panel 1: Live Telemetry ───────────────────────────────────────────────────
 with col1:
     telemetry_html = '<div class="panel-card"><div class="panel-title">📡 Sensor Stream</div>'
-    for t in reversed(st.session_state.history[-15:]):
+    for t in reversed(st.session_state.history[-8:]):
         h = t["heart_rate"]
         hr_cls = "tele-hr-high" if h > 130 else "tele-hr-mid" if h > 100 else "tele-hr-ok"
-        accel = t["accelerometer"]
-        gps = t["gps"]
         telemetry_html += f"""
-        <div class="tele-row">
-          <span class="tele-ts">{t['timestamp']}</span><br>
-          <span class="tele-key">HR: </span><span class="{hr_cls}">{h}</span>
-          <span class="tele-key">HRV: </span><span class="tele-val">{t['hrv']}</span>
-          <span class="tele-key">BAT: </span><span class="tele-val">{t['battery_pct']}%</span><br>
-          <span class="tele-key">ACT: </span><span class="tele-val">{accel['activity']}</span>
-          <span class="tele-key">LOC: </span><span class="tele-val">{gps['label']}</span><br>
-          <span class="tele-key">APP: </span><span class="tele-val">{t['active_app']}</span>
+        <div class="tele-row" style="display:flex; justify-content:space-between; align-items:center;">
+          <span class="tele-ts">{t['timestamp']}</span>
+          <span><span class="tele-key">HR:</span> <span class="{hr_cls}">{h}</span></span>
+          <span><span class="tele-key">ACT:</span> <span class="tele-val">{t['accelerometer']['activity']}</span></span>
+          <span><span class="tele-key">BAT:</span> <span class="tele-val">{t['battery_pct']}%</span></span>
         </div>"""
     telemetry_html += '</div>'
     st.markdown(telemetry_html, unsafe_allow_html=True)
@@ -366,11 +347,6 @@ with col2:
     stress = ps.get("stress_level", 0)
     vuln = ps.get("vulnerability_score", 0)
     
-    stress_color = "#ff1744" if stress > 7 else "#ffab00" if stress > 4 else "#00e676"
-    vuln_color = "#ff1744" if vuln > 7 else "#ffab00" if vuln > 4 else "#00e676"
-    
-    flags_html = "".join([f"<span style='background:rgba(255,23,68,0.15);color:#ff1744;padding:2px 6px;border-radius:4px;font-size:0.6rem;margin-right:4px;'>{f}</span>" for f in ps.get('flags', [])])
-
     profiler_html = f"""
     <div class="panel-card">
       <div class="panel-title">🧠 1. PROFILER (OBSERVER)</div>
@@ -378,31 +354,6 @@ with col2:
         {state_val.upper()}
       </div>
       <div class="profiler-summary">{ps.get('summary', 'Initializing...')}</div>
-
-      <div style="margin-bottom:12px;">
-        <div class="metric-row">
-          <span class="metric-label">VULNERABILITY</span>
-          <span style="font-family:Space Mono,monospace;font-size:0.72rem;color:{vuln_color};">{vuln}/10</span>
-        </div>
-        <div class="metric-bar-bg"><div class="metric-bar-fill" style="width:{min(100, vuln*10)}%;background:{vuln_color};"></div></div>
-      </div>
-
-      <div style="margin-bottom:12px;">
-        <div class="metric-row">
-          <span class="metric-label">STRESS INDEX</span>
-          <span style="font-family:Space Mono,monospace;font-size:0.72rem;color:{stress_color};">{stress}/10</span>
-        </div>
-        <div class="metric-bar-bg"><div class="metric-bar-fill" style="width:{min(100, stress*10)}%;background:{stress_color};"></div></div>
-      </div>
-      
-      <div style="margin-top:10px;margin-bottom:10px;">
-        <div class="metric-label" style="margin-bottom:4px;">ACTIVE FLAGS</div>
-        <div>{flags_html if flags_html else "<span style='color:#555;font-size:0.7rem;'>None</span>"}</div>
-      </div>
-
-      <div style="font-family:Space Mono,monospace;font-size:0.6rem;color:#444;margin-top:20px;">
-        SOURCE: {"🤖 GEMMA3:1B" if ps.get("source") == "gemma3:1b" else "📐 RULE ENGINE"}
-      </div>
     </div>"""
     st.markdown(profiler_html, unsafe_allow_html=True)
 
@@ -411,24 +362,18 @@ with col2:
 with col3:
     action_html = '<div class="panel-card"><div class="panel-title">⚡ 2. ACTION (URGENCY)</div>'
 
-    for entry in st.session_state.action_log[:8]:
+    for entry in st.session_state.action_log[:5]:
         action = entry.get("action", "log")
-        severity = entry.get("severity", 1)
         reason = entry.get("reason", "—")
         
         action_class = f"action-{action}"
         tag_class = f"tag-{action}"
         action_label = {"alert": "🚨 ALERT", "suppress": "🔇 SUPPRESS", "log": "📋 LOG", "defer": "⏳ DEFER"}.get(action, action.upper())
-        dots = "●" * severity + "○" * (5 - severity)
 
         action_html += f"""
         <div class="action-entry {action_class}">
           <div style="display:flex;justify-content:space-between;">
-            <div>
-              <span class="action-tag {tag_class}">{action_label}</span>
-              <span style="font-family:Space Mono,monospace;font-size:0.6rem;color:#555;margin-left:6px;">{dots}</span>
-            </div>
-            <span style="font-size:0.6rem;color:#444;">#{entry.get('tick')}</span>
+            <span class="action-tag {tag_class}">{action_label}</span>
           </div>
           <div class="action-reason">{reason}</div>
         </div>"""
@@ -440,11 +385,10 @@ with col3:
 with col4:
     arbiter_html = '<div class="panel-card"><div class="panel-title">⚖️ 3. ARBITER (WISDOM)</div>'
 
-    for entry in st.session_state.arbiter_log[:6]:
+    for entry in st.session_state.arbiter_log[:4]:
         final_decision = entry.get("final_decision", "log")
         overridden = entry.get("overridden", False)
         reasoning = entry.get("arbiter_reasoning", "—")
-        wisdom = entry.get("wisdom_applied", "—")
         
         status_color = "#ffab00" if overridden else "#00e676"
         status_text = "OVERRIDE" if overridden else "AGREED"
@@ -453,7 +397,6 @@ with col4:
         <div class="action-entry" style="border-left-color:{status_color}; background:rgba(255,255,255,0.03);">
           <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
             <span class="action-tag" style="color:{status_color};">{status_text} ➔ {final_decision.upper()}</span>
-            <span style="font-family:Space Mono,monospace;font-size:0.6rem;color:#555;">[{wisdom}]</span>
           </div>
           <div class="action-reason" style="color:#d0d0d0;font-size:0.75rem;">{reasoning}</div>
         </div>"""
