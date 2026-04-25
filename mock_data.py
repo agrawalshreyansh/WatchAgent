@@ -1,4 +1,5 @@
 from datetime import datetime
+import copy
 
 def ts():
     return datetime.now().strftime("%H:%M:%S")
@@ -174,23 +175,47 @@ SCENARIOS = {
 import random
 
 def get_tick(scenario_key, tick_index):
+    if scenario_key not in SCENARIOS:
+        # Fall back to a known scenario instead of crashing on bad input.
+        scenario_key = "morning_wake"
+
     scenario = SCENARIOS[scenario_key]
-    ticks = scenario["ticks"]
+    ticks = scenario.get("ticks", [])
+    if not ticks:
+        return {
+            "heart_rate": 75,
+            "hrv": 45,
+            "spo2": 98,
+            "accelerometer": {"activity": "unknown", "steps_per_min": 0, "magnitude": 0.0},
+            "gps": {"context": "familiar_zone", "label": "Unknown"},
+            "active_app": "unknown",
+            "battery_pct": 50,
+            "screen_on": False,
+            "timestamp": datetime.now().strftime("%H:%M:%S"),
+            "scenario": scenario_key,
+        }
+
+    safe_tick_index = max(0, int(tick_index)) if isinstance(tick_index, int) else 0
     
     # Slow down the progression: stay on each defined mock state for 4 ticks
     # This prevents the activity from changing unrealistically fast
-    slow_index = tick_index // 4
+    slow_index = safe_tick_index // 4
     
     # Clamp to the last state instead of looping, which prevents battery from jumping back up
     idx = min(slow_index, len(ticks) - 1)
-    tick = ticks[idx].copy()
+    tick = copy.deepcopy(ticks[idx])
     
     # Add minor realistic noise to vitals so the stream looks alive even when clamped
-    tick["heart_rate"] = tick["heart_rate"] + random.randint(-1, 1)
-    tick["hrv"] = tick["hrv"] + random.randint(-1, 1)
+    if isinstance(tick.get("heart_rate"), int):
+        tick["heart_rate"] = tick["heart_rate"] + random.randint(-1, 1)
+    if isinstance(tick.get("hrv"), int):
+        tick["hrv"] = tick["hrv"] + random.randint(-1, 1)
     
     # Ensure nested dictionary is copied so we don't mutate original
-    tick["accelerometer"] = tick["accelerometer"].copy()
+    if not isinstance(tick.get("accelerometer"), dict):
+        tick["accelerometer"] = {"activity": "unknown", "steps_per_min": 0, "magnitude": 0.0}
+    if not isinstance(tick.get("gps"), dict):
+        tick["gps"] = {"context": "familiar_zone", "label": "Unknown"}
     
     tick["timestamp"] = datetime.now().strftime("%H:%M:%S")
     tick["scenario"] = scenario_key

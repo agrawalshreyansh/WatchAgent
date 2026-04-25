@@ -1,7 +1,5 @@
 import streamlit as st
 import time
-import json
-from datetime import datetime
 from mock_data import SCENARIOS, get_tick
 from agents import run_profiler, run_action_agent, run_arbiter
 
@@ -201,6 +199,44 @@ if "emergency_notified" not in st.session_state:
     st.session_state.emergency_notified = False
 
 
+def normalize_tick(raw_tick: dict, scenario_key: str) -> dict:
+    """Ensure telemetry has required keys and safe defaults."""
+    if not isinstance(raw_tick, dict):
+        raw_tick = {}
+
+    accel = raw_tick.get("accelerometer") or {}
+    if not isinstance(accel, dict):
+        accel = {}
+
+    gps = raw_tick.get("gps") or {}
+    if not isinstance(gps, dict):
+        gps = {}
+
+    scenario_meta = SCENARIOS.get(scenario_key, {})
+
+    return {
+        "timestamp": raw_tick.get("timestamp", "--:--:--"),
+        "heart_rate": int(raw_tick.get("heart_rate", 75) or 75),
+        "hrv": int(raw_tick.get("hrv", 45) or 45),
+        "spo2": int(raw_tick.get("spo2", 98) or 98),
+        "accelerometer": {
+            "activity": accel.get("activity", "unknown"),
+            "steps_per_min": int(accel.get("steps_per_min", 0) or 0),
+            "magnitude": float(accel.get("magnitude", 0.0) or 0.0),
+        },
+        "gps": {
+            "context": gps.get("context", "familiar_zone"),
+            "label": gps.get("label", "Unknown"),
+        },
+        "active_app": raw_tick.get("active_app", "unknown"),
+        "battery_pct": max(0, min(100, int(raw_tick.get("battery_pct", 50) or 50))),
+        "screen_on": bool(raw_tick.get("screen_on", False)),
+        "scenario": raw_tick.get("scenario", scenario_key),
+        "scenario_label": scenario_meta.get("label", scenario_key),
+        "scenario_color": scenario_meta.get("color", "#999"),
+    }
+
+
 # ── Header ────────────────────────────────────────────────────────────────────
 st.markdown("""
 <div class="dash-header">
@@ -237,6 +273,7 @@ for r in range(rows):
 
 # ── Advance tick ──────────────────────────────────────────────────────────────
 tick = get_tick(st.session_state.scenario, st.session_state.tick_index)
+tick = normalize_tick(tick, st.session_state.scenario)
 st.session_state.history.append(tick)
 if len(st.session_state.history) > 25:
     st.session_state.history = st.session_state.history[-25:]
@@ -250,11 +287,11 @@ st.session_state.profiler_state = profiler_state
 
 # Log to action log
 action_entry = {
-    "timestamp": tick["timestamp"],
+    "timestamp": tick.get("timestamp", "--:--:--"),
     "tick": st.session_state.tick_index,
     **action_state,
-    "hr": tick["heart_rate"],
-    "battery": tick["battery_pct"],
+    "hr": tick.get("heart_rate", 75),
+    "battery": tick.get("battery_pct", 50),
 }
 st.session_state.action_log.insert(0, action_entry)
 if len(st.session_state.action_log) > 30:
@@ -262,7 +299,7 @@ if len(st.session_state.action_log) > 30:
 
 # Log to arbiter log
 arbiter_entry = {
-    "timestamp": tick["timestamp"],
+    "timestamp": tick.get("timestamp", "--:--:--"),
     "tick": st.session_state.tick_index,
     **arbiter_state,
 }
@@ -283,9 +320,9 @@ elif not is_emergency:
 
 
 # ── Vital strip ───────────────────────────────────────────────────────────────
-hr = tick["heart_rate"]
-battery = tick["battery_pct"]
-activity = tick["accelerometer"]["activity"]
+hr = tick.get("heart_rate", 75)
+battery = tick.get("battery_pct", 50)
+activity = tick.get("accelerometer", {}).get("activity", "unknown")
 
 hr_color = "#ff1744" if hr > 130 else "#ffab00" if hr > 100 else "#00e676"
 bat_color = "#ff1744" if battery < 10 else "#ffab00" if battery < 25 else "#00e676"
@@ -308,7 +345,7 @@ st.markdown(f"""
   </div>
   <div style="margin-left:auto;">
     <div style="font-family:Space Mono,monospace;font-size:0.62rem;color:#555;">SCENARIO</div>
-    <div style="font-size:0.8rem;font-weight:600;color:{SCENARIOS[st.session_state.scenario]['color']};">{SCENARIOS[st.session_state.scenario]['label']}</div>
+        <div style="font-size:0.8rem;font-weight:600;color:{tick.get('scenario_color', '#999')};">{tick.get('scenario_label', st.session_state.scenario)}</div>
   </div>
 </div>
 """, unsafe_allow_html=True)
@@ -321,14 +358,17 @@ col1, col2, col3, col4 = st.columns([1.1, 1, 1.1, 1.3])
 with col1:
     telemetry_html = '<div class="panel-card"><div class="panel-title">📡 Sensor Stream</div>'
     for t in reversed(st.session_state.history[-8:]):
-        h = t["heart_rate"]
+        h = t.get("heart_rate", 75)
+        t_activity = t.get("accelerometer", {}).get("activity", "unknown")
+        t_battery = t.get("battery_pct", 50)
+        t_timestamp = t.get("timestamp", "--:--:--")
         hr_cls = "tele-hr-high" if h > 130 else "tele-hr-mid" if h > 100 else "tele-hr-ok"
         telemetry_html += f"""
         <div class="tele-row" style="display:flex; justify-content:space-between; align-items:center;">
-          <span class="tele-ts">{t['timestamp']}</span>
+          <span class="tele-ts">{t_timestamp}</span>
           <span><span class="tele-key">HR:</span> <span class="{hr_cls}">{h}</span></span>
-          <span><span class="tele-key">ACT:</span> <span class="tele-val">{t['accelerometer']['activity']}</span></span>
-          <span><span class="tele-key">BAT:</span> <span class="tele-val">{t['battery_pct']}%</span></span>
+          <span><span class="tele-key">ACT:</span> <span class="tele-val">{t_activity}</span></span>
+          <span><span class="tele-key">BAT:</span> <span class="tele-val">{t_battery}%</span></span>
         </div>"""
     telemetry_html += '</div>'
     st.markdown(telemetry_html, unsafe_allow_html=True)

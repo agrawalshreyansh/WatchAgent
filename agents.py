@@ -1,9 +1,11 @@
 import requests
 import json
+import logging
 from typing import Optional
 
 OLLAMA_URL = "http://localhost:11434/api/generate"
 MODEL = "gemma3:1b"
+logger = logging.getLogger(__name__)
 
 
 def call_ollama(prompt: str, max_tokens: int = 300) -> str:
@@ -15,8 +17,14 @@ def call_ollama(prompt: str, max_tokens: int = 300) -> str:
             "format": "json",
             "options": {"temperature": 0.1, "num_predict": max_tokens}
         }, timeout=5)
-        return res.json().get("response", "")
-    except Exception:
+        res.raise_for_status()
+        payload = res.json()
+        if not isinstance(payload, dict):
+            logger.warning("Ollama response is not JSON object")
+            return ""
+        return payload.get("response", "")
+    except (requests.RequestException, ValueError) as exc:
+        logger.warning("Ollama request failed: %s", exc)
         return ""
 
 
@@ -24,7 +32,7 @@ def parse_json(raw: str) -> Optional[dict]:
     try:
         cleaned = raw.strip().replace("```json", "").replace("```", "").strip()
         return json.loads(cleaned)
-    except Exception:
+    except (AttributeError, json.JSONDecodeError):
         return None
 
 
