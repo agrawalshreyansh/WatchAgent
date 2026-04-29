@@ -1,7 +1,7 @@
 import streamlit as st
 import time
-from mock_data import SCENARIOS, get_tick
-from agents import run_profiler, run_action_agent, run_arbiter
+from dashboard.mock_data import SCENARIOS, get_tick
+from dashboard.agents import run_profiler, run_action_agent, run_arbiter
 
 # ── Page config ───────────────────────────────────────────────────────────────
 st.set_page_config(
